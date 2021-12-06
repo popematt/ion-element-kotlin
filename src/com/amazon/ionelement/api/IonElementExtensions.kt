@@ -15,6 +15,13 @@
 
 package com.amazon.ionelement.api
 
+import com.amazon.ionelement.impl.ListElementImpl
+import com.amazon.ionelement.impl.SexpElementImpl
+import com.amazon.ionelement.impl.StructElementImpl
+import com.amazon.ionelement.impl.StructFieldImpl
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.toPersistentMap
+
 /** Returns a shallow copy of the current node with the specified additional annotations. */
 internal inline fun <reified T: IonElement> T._withAnnotations(vararg additionalAnnotations: String): T =
     when {
@@ -96,3 +103,54 @@ val List<AnyElement>.head get() =
 
 /** Returns a copy of the list with the first element removed. */
 val List<AnyElement>.tail get() = this.subList(1, this.size)
+
+/**
+ * Maps the contents of a [ListElement] or [SexpElement], preserving the type and optionally preserving the
+ * annotations and metas of the original sequence. See also [Iterable.map].
+ */
+inline fun <reified T: SeqElement> T.map(
+    annotations: List<String> = this.annotations,
+    metas: MetaContainer = emptyMetaContainer(),
+    transform: (AnyElement) -> IonElement
+): T {
+    val newValues = values.map { transform(it).asAnyElement() }.toPersistentList()
+    val newAnnotations = annotations.toPersistentList()
+    val newMetas = metas.toPersistentMap()
+    return when (this) {
+        is SexpElement -> ionSexpOf(newValues, newAnnotations, newMetas) as T
+        else -> ionListOf(newValues, newAnnotations, newMetas) as T
+    }
+}
+
+fun StructElement.map(
+    annotations: List<String> = this.annotations,
+    metas: MetaContainer = emptyMetaContainer(),
+    transform: (StructField) -> StructField
+): StructElement {
+    val newFields = fields.map { transform(it) }.toPersistentList()
+    val newAnnotations = annotations.toPersistentList()
+    val newMetas = metas.toPersistentMap()
+    return ionStructOf(newFields, newAnnotations, newMetas)
+}
+
+fun StructElement.mapValues(
+    annotations: List<String> = this.annotations,
+    metas: MetaContainer = emptyMetaContainer(),
+    transform: (StructField) -> IonElement
+): StructElement {
+    val newFields = fields.map { StructFieldImpl(it.name, transform(it).asAnyElement()) }.toPersistentList()
+    val newAnnotations = annotations.toPersistentList()
+    val newMetas = metas.toPersistentMap()
+    return ionStructOf(newFields, newAnnotations, newMetas)
+}
+
+fun StructElement.mapKeys(
+    annotations: List<String> = this.annotations,
+    metas: MetaContainer = emptyMetaContainer(),
+    transform: (StructField) -> String
+): StructElement {
+    val newFields = fields.map { StructFieldImpl(transform(it), it.value) }.toPersistentList()
+    val newAnnotations = annotations.toPersistentList()
+    val newMetas = metas.toPersistentMap()
+    return ionStructOf(newFields, newAnnotations, newMetas)
+}
