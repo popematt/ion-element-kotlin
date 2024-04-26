@@ -18,6 +18,7 @@ package com.amazon.ionelement.api
 
 import com.amazon.ion.Decimal
 import com.amazon.ion.Timestamp
+import com.amazon.ionelement.impl.*
 import com.amazon.ionelement.impl.BigIntIntElementImpl
 import com.amazon.ionelement.impl.BlobElementImpl
 import com.amazon.ionelement.impl.BoolElementImpl
@@ -25,7 +26,6 @@ import com.amazon.ionelement.impl.ClobElementImpl
 import com.amazon.ionelement.impl.DecimalElementImpl
 import com.amazon.ionelement.impl.FloatElementImpl
 import com.amazon.ionelement.impl.ListElementImpl
-import com.amazon.ionelement.impl.LongIntElementImpl
 import com.amazon.ionelement.impl.NullElementImpl
 import com.amazon.ionelement.impl.SexpElementImpl
 import com.amazon.ionelement.impl.StringElementImpl
@@ -88,7 +88,8 @@ Below, we use a combination of @JvmOverloads and the manually implemented overlo
 
 /**
  * Creates an [IonElement] that represents an Ion `null.null` or a typed `null` with the specified metas
- * and annotations. */
+ * and annotations.
+ */
 @JvmOverloads
 public fun ionNull(
     elementType: ElementType = ElementType.NULL,

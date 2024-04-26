@@ -22,6 +22,7 @@ import com.amazon.ionelement.util.INCLUDE_LOCATION_META
 import com.amazon.ionelement.util.ION
 import com.amazon.ionelement.util.IonElementLoaderTestCase
 import com.amazon.ionelement.util.convertToString
+import com.amazon.ionelement.wrapper.*
 import java.math.BigInteger
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -50,6 +51,10 @@ class IonElementLoaderTests {
         // Converting from IonValue to IonElement should result in an IonElement that is equivalent to the
         // parsed IonElement
         assertEquals(parsedIonValue.toIonElement(), parsedIonElement)
+
+        // Wrapping an IonValue as IonElement should result in an IonElement that is equivalent to the
+        // parsed IonElement
+        assertEquals(parsedIonElement, parsedIonValue.wrapUncheckedIntoIonElement())
 
         assertEquals(tc.expectedElement, parsedIonElement)
     }

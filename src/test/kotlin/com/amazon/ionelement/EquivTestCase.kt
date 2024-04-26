@@ -17,15 +17,57 @@ package com.amazon.ionelement
 
 import com.amazon.ionelement.api.*
 import com.amazon.ionelement.impl.*
+import com.amazon.ionelement.util.*
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.Assertions
 
 data class EquivTestCase(val left: String, val right: String, val isEquiv: Boolean) {
-    fun checkEquivalence() {
+
+    companion object {
         val loader = createIonElementLoader()
+    }
+
+    fun checkEquivalence() {
 
         // Note: metas are not relevant to equivalence tests.
-        val leftElement = loader.loadSingleElement(left).withMeta("leftMeta", 1)
-        val rightElement = loader.loadSingleElement(right).withMeta("rightMeta", 2)
+        val leftElement = loader.loadSingleElement(left)
+        val leftElementWithMetas = leftElement.withMeta("leftMeta", 1)
+        assertEquals(leftElement, leftElementWithMetas)
+        val leftProxy = leftElement.createProxy()
+        assertEquals(leftElement, leftProxy)
+        val leftWrapped = leftElement.toIonValue(ION).wrapUncheckedIntoIonElement()
+        assertEquals(leftElement, leftWrapped)
+
+        val rightElement = loader.loadSingleElement(right)
+        val rightElementWithMetas = rightElement.withMeta("rightMeta", 2)
+
+        val rightWrapped = rightElement.toIonValue(ION).wrapUncheckedIntoIonElement()
+
+        // Try using a proxy to make sure that equivalence is not tied to a particular implementation.
+        val rightProxy = rightElement.createProxy()
+
+        val leftElements = listOf(
+            leftElement,
+            leftProxy,
+            leftElementWithMetas,
+            leftWrapped,
+        )
+
+        val rightElements = listOf(
+            rightElement,
+            rightElementWithMetas,
+            rightProxy,
+            rightWrapped,
+        )
+
+        leftElements.forEach { l ->
+            rightElements.forEach { r ->
+                checkEquivalence(l, r)
+            }
+        }
+    }
+
+    private fun checkEquivalence(leftElement: AnyElement, rightElement: AnyElement) {
 
         // It seems unlikely that we should ever return zero--if we do it probably is a bug.
         // (this may need to be revisited in the future)
@@ -65,17 +107,6 @@ data class EquivTestCase(val left: String, val right: String, val isEquiv: Boole
         // Nesting the values within a struct should not change the result
         fun nest(ie: AnyElement) = ionStructOf("nested" to ie)
         checkEquivalence(isEquiv, nest(leftElement), nest(rightElement))
-
-        // Try using a proxy to make sure that equivalence is not tied to a particular implementation.
-        val leftProxy = leftElement.createProxy()
-        val rightProxy = rightElement.createProxy()
-        Assertions.assertEquals(leftElement, leftProxy)
-        Assertions.assertEquals(rightProxy, rightElement)
-
-        // Equivalence should be transitive
-        checkEquivalence(isEquiv, leftElement, rightProxy)
-        checkEquivalence(isEquiv, leftProxy, rightElement)
-        checkEquivalence(isEquiv, leftProxy, rightProxy)
     }
 
     private fun checkEquivalence(equiv: Boolean, first: IonElement, second: IonElement) {

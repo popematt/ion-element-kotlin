@@ -73,7 +73,12 @@ class EquivalenceTests {
     fun randomEquivalenceTests() {
         // This is not parameterized like the other tests because it makes little sense to have 10k individual tests
         // appear in the IDE.
-        repeat(10000) {
+
+        // Running this 10000 times is excessively slow for local development.
+        // At 100 repetitions, this particular test still dominates the overall runtime of
+        // the test suite, but it is at least a matter of seconds instead of minutes.
+        val n = if (System.getenv("CI") == "true") 10000 else 100
+        repeat(n) {
             val ionText = randomIonElement().toString()
             try {
                 EquivTestCase(ionText, ionText, isEquiv = true).checkEquivalence()

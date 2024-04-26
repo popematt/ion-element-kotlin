@@ -18,30 +18,30 @@ package com.amazon.ionelement.impl
 import com.amazon.ionelement.api.*
 
 /** Returns a shallow copy of the current node with the specified additional annotations. */
-internal inline fun <reified T : IonElement> T._withAnnotations(vararg additionalAnnotations: String): T =
+internal inline fun <reified T : IonElement> IonElement._withAnnotations(vararg additionalAnnotations: String): T =
     when {
-        additionalAnnotations.isEmpty() -> this
+        additionalAnnotations.isEmpty() && this is T -> this
         else -> copy(annotations = this.annotations + additionalAnnotations) as T
     }
 
 /** Returns a shallow copy of the current node with the specified additional annotations. */
-internal inline fun <reified T : IonElement> T._withAnnotations(additionalAnnotations: Iterable<String>): T =
+internal inline fun <reified T : IonElement> IonElement._withAnnotations(additionalAnnotations: Iterable<String>): T =
     _withAnnotations(*additionalAnnotations.toList().toTypedArray())
 
 /** Returns a shallow copy of the current node with all annotations removed. */
-internal inline fun <reified T : IonElement> T._withoutAnnotations(): T =
+internal inline fun <reified T : IonElement> IonElement._withoutAnnotations(): T =
     when {
-        this.annotations.isNotEmpty() -> copy(annotations = emptyList()) as T
-        else -> this
+        annotations.isEmpty() && this is T -> this
+        else -> copy(annotations = emptyList()) as T
     }
 
 /**
  * Returns a shallow copy of the current node with the specified additional metadata, overwriting any metas
  * that already exist with the same keys.
  */
-internal inline fun <reified T : IonElement> T._withMetas(additionalMetas: MetaContainer): T =
+internal inline fun <reified T : IonElement> IonElement._withMetas(additionalMetas: MetaContainer): T =
     when {
-        additionalMetas.isEmpty() -> this
+        additionalMetas.isEmpty() && this is T -> this
         else -> copy(metas = metaContainerOf(metas.toList().union(additionalMetas.toList()).toList())) as T
     }
 
@@ -51,12 +51,12 @@ internal inline fun <reified T : IonElement> T._withMetas(additionalMetas: MetaC
  *
  * When adding multiple metas, consider [withMetas] instead.
  */
-internal inline fun <reified T : IonElement> T._withMeta(key: String, value: Any): T =
+internal inline fun <reified T : IonElement> IonElement._withMeta(key: String, value: Any): T =
     _withMetas(metaContainerOf(key to value))
 
 /** Returns a shallow copy of the current node without any metadata. */
-internal inline fun <reified T : IonElement> T._withoutMetas(): T =
+internal inline fun <reified T : IonElement> IonElement._withoutMetas(): T =
     when {
-        metas.isEmpty() -> this
+        metas.isEmpty() && this is T -> this
         else -> copy(metas = emptyMetaContainer(), annotations = annotations) as T
     }

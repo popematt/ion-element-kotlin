@@ -19,14 +19,7 @@ import com.amazon.ion.Decimal
 import com.amazon.ion.IonWriter
 import com.amazon.ion.Timestamp
 import com.amazon.ion.system.IonTextWriterBuilder
-import com.amazon.ionelement.api.AnyElement
-import com.amazon.ionelement.api.BlobElement
-import com.amazon.ionelement.api.BoolElement
-import com.amazon.ionelement.api.ByteArrayView
-import com.amazon.ionelement.api.ClobElement
-import com.amazon.ionelement.api.ContainerElement
-import com.amazon.ionelement.api.DecimalElement
-import com.amazon.ionelement.api.ElementType
+import com.amazon.ionelement.api.*
 import com.amazon.ionelement.api.ElementType.BLOB
 import com.amazon.ionelement.api.ElementType.BOOL
 import com.amazon.ionelement.api.ElementType.CLOB
@@ -40,20 +33,6 @@ import com.amazon.ionelement.api.ElementType.STRING
 import com.amazon.ionelement.api.ElementType.STRUCT
 import com.amazon.ionelement.api.ElementType.SYMBOL
 import com.amazon.ionelement.api.ElementType.TIMESTAMP
-import com.amazon.ionelement.api.FloatElement
-import com.amazon.ionelement.api.IntElement
-import com.amazon.ionelement.api.IntElementSize
-import com.amazon.ionelement.api.IonElement
-import com.amazon.ionelement.api.ListElement
-import com.amazon.ionelement.api.LobElement
-import com.amazon.ionelement.api.SeqElement
-import com.amazon.ionelement.api.SexpElement
-import com.amazon.ionelement.api.StringElement
-import com.amazon.ionelement.api.StructElement
-import com.amazon.ionelement.api.StructField
-import com.amazon.ionelement.api.SymbolElement
-import com.amazon.ionelement.api.TextElement
-import com.amazon.ionelement.api.TimestampElement
 import com.amazon.ionelement.api.constraintError
 import java.math.BigInteger
 
@@ -79,9 +58,9 @@ internal abstract class AnyElementBase : AnyElement {
         this.writeContentTo(writer)
     }
 
-    override fun toString() = StringBuilder().also { buf ->
-        TEXT_WRITER_BUILDER.build(buf).use { writeTo(it) }
-    }.toString()
+    final override fun toString() = StringBuilder().also { TEXT_WRITER_BUILDER.build(it).use(::writeTo) }.toString()
+    override fun equals(other: Any?): Boolean = isEquivalentTo(other)
+    override fun hashCode(): Int = hashElement(this)
 
     override val integerSize: IntElementSize get() = constraintError(this, "integerSize not valid for this Element")
 

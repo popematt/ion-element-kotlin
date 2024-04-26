@@ -15,6 +15,8 @@
 
 package com.amazon.ionelement.api
 
+import com.amazon.ion.IonValue
+
 /**
  * Base exception which includes the [location] in the message if it was included at construction time.
  */
@@ -43,3 +45,15 @@ public class IonElementConstraintException internal constructor(
 ) : IonElementException(elementToBlame.metas.location, description, cause) {
     public val blame: AnyElement get() = elementToBlame.asAnyElement()
 }
+
+/**
+ * Exception thrown by [IonElement] accessor functions when a wrapped [IonValue] cannot provide the requested data.
+ * (This is almost always because of an unknown symbol text.)
+ *
+ * [blame] is the [IonValue] instance that violates the constraint.
+ */
+public class IonElementWrapperException internal constructor(
+    val blame: IonValue,
+    description: String,
+    cause: Throwable? = null
+) : IonElementException(null, description, cause)

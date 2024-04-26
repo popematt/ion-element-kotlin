@@ -16,8 +16,7 @@
 package com.amazon.ionelement
 
 import com.amazon.ion.Decimal
-import com.amazon.ionelement.api.AnyElement
-import com.amazon.ionelement.api.ElementType
+import com.amazon.ionelement.api.*
 import com.amazon.ionelement.api.ElementType.BLOB
 import com.amazon.ionelement.api.ElementType.BOOL
 import com.amazon.ionelement.api.ElementType.CLOB
@@ -31,10 +30,8 @@ import com.amazon.ionelement.api.ElementType.STRING
 import com.amazon.ionelement.api.ElementType.STRUCT
 import com.amazon.ionelement.api.ElementType.SYMBOL
 import com.amazon.ionelement.api.ElementType.TIMESTAMP
-import com.amazon.ionelement.api.IonElementException
-import com.amazon.ionelement.api.ionInt
-import com.amazon.ionelement.api.loadSingleElement
 import com.amazon.ionelement.impl.ByteArrayViewImpl
+import com.amazon.ionelement.util.*
 import java.math.BigInteger
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -43,18 +40,29 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
-class AnyElementTests {
+class AnyElementImplTests : AnyElementTests() {
+    override fun loadSingleElementForTest(ionText: String): AnyElement = loadSingleElement(ionText)
+}
+
+class AnyValueWrapperTests : AnyElementTests() {
+    override fun loadSingleElementForTest(ionText: String): AnyElement = ION.singleValue(ionText).wrapUncheckedIntoIonElement()
+}
+
+abstract class AnyElementTests {
+
+    abstract fun loadSingleElementForTest(ionText: String): AnyElement
+
     @ParameterizedTest
     @MethodSource("parametersForValueAccessorsTest")
     fun valueAccessorTests(tc: TestCase) {
-        val element = loadSingleElement(tc.ionText)
+        val element = loadSingleElementForTest(tc.ionText)
         assertElementProperties(element, tc.elementType, tc.expectedValue)
     }
 
     @Test
     fun structFieldsTest() {
         /** Test what we were unable to in [assertAccessors] */
-        val s = loadSingleElement("{ foo: 1, bar: 2 }").structFields
+        val s = loadSingleElementForTest("{ foo: 1, bar: 2 }").structFields
         assertEquals(2, s.count())
         s.single { it.name == "foo" && it.value.longValue == 1L }
         s.single { it.name == "bar" && it.value.longValue == 2L }
@@ -64,7 +72,7 @@ class AnyElementTests {
     fun bigIntegerValueFromLongIntElement() {
         val longValues = listOf(1, 0, -1, Long.MIN_VALUE, Long.MAX_VALUE)
         longValues.map {
-            val bigInt = loadSingleElement(it.toString())
+            val bigInt = loadSingleElementForTest(it.toString())
             val bigIntValue = bigInt.bigIntegerValue
             assertEquals(BigInteger.valueOf(it), bigIntValue)
         }

@@ -400,6 +400,10 @@ public final class com/amazon/ionelement/api/IonElementLoaderOptions {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/amazon/ionelement/api/IonElementWrapperException : com/amazon/ionelement/api/IonElementException {
+	public final fun getBlame ()Lcom/amazon/ion/IonValue;
+}
+
 public abstract class com/amazon/ionelement/api/IonLocation {
 }
 
@@ -569,6 +573,9 @@ public final class com/amazon/ionelement/api/IonTextLocation : com/amazon/ionele
 public final class com/amazon/ionelement/api/IonUtils {
 	public static final fun toIonElement (Lcom/amazon/ion/IonValue;)Lcom/amazon/ionelement/api/AnyElement;
 	public static final fun toIonValue (Lcom/amazon/ionelement/api/IonElement;Lcom/amazon/ion/ValueFactory;)Lcom/amazon/ion/IonValue;
+	public static final fun toReadOnlyIonValue (Lcom/amazon/ionelement/api/IonElement;Lcom/amazon/ion/ValueFactory;)Lcom/amazon/ion/IonValue;
+	public static final fun wrapIntoIonElement (Lcom/amazon/ion/IonValue;)Lcom/amazon/ionelement/api/AnyElement;
+	public static final fun wrapUncheckedIntoIonElement (Lcom/amazon/ion/IonValue;)Lcom/amazon/ionelement/api/AnyElement;
 }
 
 public abstract interface class com/amazon/ionelement/api/ListElement : com/amazon/ionelement/api/SeqElement {
