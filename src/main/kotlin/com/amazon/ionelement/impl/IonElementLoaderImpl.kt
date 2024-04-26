@@ -154,7 +154,7 @@ internal class IonElementLoaderImpl(private val options: IonElementLoaderOptions
                                 }
                                 IonType.STRUCT -> {
                                     val fields = mutableListOf<StructField>()
-                                    ionReader.forEachValue { fields.add(StructFieldImpl(ionReader.fieldName, loadCurrentElement(ionReader))) }
+                                    ionReader.forEachValue { fields.add(StructFieldImpl(ionReader.fieldNameSymbol.assumeText(), loadCurrentElement(ionReader))) }
                                     ionStructOf(fields)
                                 }
                                 else -> error("Unexpected Ion type for container Ion data type ${ionReader.type}.")

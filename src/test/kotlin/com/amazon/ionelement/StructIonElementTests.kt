@@ -15,11 +15,8 @@
 
 package com.amazon.ionelement
 
-import com.amazon.ionelement.api.IonElement
-import com.amazon.ionelement.api.IonElementException
-import com.amazon.ionelement.api.StructField
-import com.amazon.ionelement.api.ionInt
-import com.amazon.ionelement.api.loadSingleElement
+import com.amazon.ionelement.api.*
+import com.amazon.ionelement.util.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -28,8 +25,17 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
-class StructIonElementTests {
-    val struct = loadSingleElement("{ a: 1, b: 2, b: 3 }").asStruct()
+class StructElementImplTests : StructIonElementTests() {
+    override val struct = loadSingleElement(structText).asStruct()
+}
+
+class StructValueWrapperTests : StructIonElementTests() {
+    override val struct = ION.singleValue(structText).wrapUncheckedIntoIonElement().asStruct()
+}
+
+abstract class StructIonElementTests {
+    protected val structText = "{ a: 1, b: 2, b: 3 }"
+    abstract val struct: StructElement
 
     @Test
     fun size() {
