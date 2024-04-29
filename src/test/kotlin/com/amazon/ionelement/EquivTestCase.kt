@@ -131,20 +131,20 @@ data class EquivTestCase(val left: String, val right: String, val isEquiv: Boole
     private fun IonElement.createProxy(): AnyElement {
         this as AnyElement
         return if (isNull) {
-            object: AnyElement by this {}
+            object : AnyElement by this {}
         } else when (this) {
-            is UnionOfBoolAndAnyElement -> object: UnionOfBoolAndAnyElement by this {}
-            is UnionOfIntAndAnyElement -> object: UnionOfIntAndAnyElement by this {}
-            is UnionOfFloatAndAnyElement -> object: UnionOfFloatAndAnyElement by this {}
-            is UnionOfDecimalAndAnyElement -> object: UnionOfDecimalAndAnyElement by this {}
-            is UnionOfTimestampAndAnyElement -> object: UnionOfTimestampAndAnyElement by this {}
-            is UnionOfStringAndAnyElement -> object: UnionOfStringAndAnyElement by this {}
-            is UnionOfSymbolAndAnyElement -> object: UnionOfSymbolAndAnyElement by this {}
-            is UnionOfBlobAndAnyElement -> object: UnionOfBlobAndAnyElement by this {}
-            is UnionOfClobAndAnyElement -> object: UnionOfClobAndAnyElement by this {}
-            is UnionOfListAndAnyElement -> object: UnionOfListAndAnyElement by this {}
-            is UnionOfSexpAndAnyElement -> object: UnionOfSexpAndAnyElement by this {}
-            is UnionOfStructAndAnyElement -> object: UnionOfStructAndAnyElement by this {}
+            is UnionOfBoolAndAnyElement -> object : UnionOfBoolAndAnyElement by this {}
+            is UnionOfIntAndAnyElement -> object : UnionOfIntAndAnyElement by this {}
+            is UnionOfFloatAndAnyElement -> object : UnionOfFloatAndAnyElement by this {}
+            is UnionOfDecimalAndAnyElement -> object : UnionOfDecimalAndAnyElement by this {}
+            is UnionOfTimestampAndAnyElement -> object : UnionOfTimestampAndAnyElement by this {}
+            is UnionOfStringAndAnyElement -> object : UnionOfStringAndAnyElement by this {}
+            is UnionOfSymbolAndAnyElement -> object : UnionOfSymbolAndAnyElement by this {}
+            is UnionOfBlobAndAnyElement -> object : UnionOfBlobAndAnyElement by this {}
+            is UnionOfClobAndAnyElement -> object : UnionOfClobAndAnyElement by this {}
+            is UnionOfListAndAnyElement -> object : UnionOfListAndAnyElement by this {}
+            is UnionOfSexpAndAnyElement -> object : UnionOfSexpAndAnyElement by this {}
+            is UnionOfStructAndAnyElement -> object : UnionOfStructAndAnyElement by this {}
             else -> TODO("Unreachable")
         }
     }

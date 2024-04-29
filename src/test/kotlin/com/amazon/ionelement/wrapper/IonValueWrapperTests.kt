@@ -107,7 +107,6 @@ class IonValueWrapperTests {
         }
     }
 
-
     @ParameterizedTest
     @EnumSource
     fun GoodTestCase.`wrapUncheckedIntoIonElement should wrap the same instance, not a copy`() = testIt {

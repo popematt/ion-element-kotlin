@@ -8,10 +8,6 @@ import com.amazon.ionelement.api.*
 import com.amazon.ionelement.impl.*
 import com.amazon.ionelement.impl.MutableStructFieldsImpl
 import com.amazon.ionelement.impl.StructElementImpl
-import com.amazon.ionelement.impl._withAnnotations
-import com.amazon.ionelement.impl._withMeta
-import com.amazon.ionelement.impl._withMetas
-import com.amazon.ionelement.impl._withoutAnnotations
 import java.util.function.Consumer
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentMap
