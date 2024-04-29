@@ -24,7 +24,7 @@ internal class FloatElementImpl(
     override val doubleValue: Double,
     override val annotations: ImmutableList<String>,
     override val metas: ImmutableMetaContainer
-) : AnyElementBase(), FloatElement {
+) : AnyElementBase(), FloatElement, UnionOfFloatAndAnyElement {
     override val type: ElementType get() = ElementType.FLOAT
 
     override fun copy(annotations: List<String>, metas: MetaContainer): FloatElementImpl =

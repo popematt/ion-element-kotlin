@@ -24,7 +24,7 @@ internal class BlobElementImpl(
     bytes: ByteArray,
     override val annotations: ImmutableList<String>,
     override val metas: ImmutableMetaContainer
-) : LobElementBase(bytes), BlobElement {
+) : LobElementBase(bytes), BlobElement, UnionOfBlobAndAnyElement {
 
     override val type: ElementType get() = ElementType.BLOB
 

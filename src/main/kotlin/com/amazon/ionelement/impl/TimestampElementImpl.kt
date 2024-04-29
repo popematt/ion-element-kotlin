@@ -25,7 +25,7 @@ internal class TimestampElementImpl(
     override val timestampValue: Timestamp,
     override val annotations: ImmutableList<String>,
     override val metas: ImmutableMetaContainer
-) : AnyElementBase(), TimestampElement {
+) : AnyElementBase(), TimestampElement, UnionOfTimestampAndAnyElement {
 
     override val type: ElementType get() = ElementType.TIMESTAMP
     override fun copy(annotations: List<String>, metas: MetaContainer): TimestampElementImpl =

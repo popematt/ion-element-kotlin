@@ -9,6 +9,8 @@ internal class ByteArrayViewImpl(private val bytes: ByteArray) : ByteArrayView {
 
     override fun copyOfBytes(): ByteArray = bytes.clone()
 
+    override fun contentEquals(otherBytes: ByteArray): Boolean = bytes.contentEquals(otherBytes)
+
     override fun iterator(): Iterator<Byte> = bytes.iterator()
 
     override fun equals(other: Any?): Boolean {

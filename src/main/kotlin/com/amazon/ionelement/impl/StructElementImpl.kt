@@ -28,7 +28,7 @@ internal class StructElementImpl(
     private val allFields: ImmutableList<StructField>,
     override val annotations: ImmutableList<String>,
     override val metas: ImmutableMetaContainer
-) : AnyElementBase(), StructElement {
+) : AnyElementBase(), StructElement, UnionOfStructAndAnyElement {
 
     override val type: ElementType get() = ElementType.STRUCT
     override val size: Int get() = allFields.size

@@ -21,6 +21,7 @@ import com.amazon.ion.IonType
 import com.amazon.ion.IonValue
 import com.amazon.ionelement.api.*
 import com.amazon.ionelement.impl.*
+import com.amazon.ionelement.impl.collections.*
 
 /**
  * Internal-only function that converts an [IonValue] to an [AnyElement] by (maybe) wrapping it
@@ -31,10 +32,14 @@ import com.amazon.ionelement.impl.*
  * scalar wrappers if they are deemed worthwhile.
  */
 internal fun IonValue.toWrapper(): AnyElement = handleIonException {
+    val annotations = ArrayList<String>(typeAnnotations.size)
+        .apply { addAll(typeAnnotations) }
+        .toImmutableListUnsafe()
+
     if (isNullValue) {
-        NullElementImpl(type.toElementType(), typeAnnotations.toPersistentList(), EMPTY_METAS)
+        NullElementImpl(type.toElementType(), typeAnnotations.toList().toImmutableListUnsafe(), EMPTY_METAS)
     } else when (type) {
-        IonType.BOOL -> ionBool((this as IonBool).booleanValue(), typeAnnotations.toPersistentList())
+        IonType.BOOL -> ionBool((this as IonBool).booleanValue(), annotations)
         IonType.INT -> when ((this as IonInt).integerSize!!) {
             IntegerSize.BIG_INTEGER -> {
                 val bigIntValue = bigIntegerValue()
@@ -43,23 +48,20 @@ internal fun IonValue.toWrapper(): AnyElement = handleIonException {
                 // but whose value only uses <= 63 bits then integerSize is still BIG_INTEGER.
                 // Compensate for that here...
                 if (bigIntValue !in RANGE_OF_LONG)
-                    ionInt(bigIntValue, typeAnnotations.toPersistentList())
+                    ionInt(bigIntValue, annotations)
                 else {
-                    ionInt(longValue(), typeAnnotations.toPersistentList())
+                    ionInt(longValue(), annotations)
                 }
             }
-            IntegerSize.LONG, IntegerSize.INT -> ionInt(this.longValue(), typeAnnotations.toPersistentList())
+            IntegerSize.LONG, IntegerSize.INT -> ionInt(this.longValue(), annotations)
         }
-        IonType.FLOAT -> ionFloat((this as IonFloat).doubleValue(), typeAnnotations.toPersistentList())
-        IonType.DECIMAL -> ionDecimal((this as IonDecimal).decimalValue(), typeAnnotations.toPersistentList())
-        IonType.TIMESTAMP -> ionTimestamp(
-            (this as IonTimestamp).timestampValue(),
-            typeAnnotations.toPersistentList()
-        )
-        IonType.STRING -> ionString((this as IonString).stringValue(), typeAnnotations.toPersistentList())
-        IonType.SYMBOL -> ionSymbol((this as IonSymbol).stringValue(), typeAnnotations.toPersistentList())
-        IonType.CLOB -> ionClob((this as IonClob).bytes, typeAnnotations.toPersistentList())
-        IonType.BLOB -> ionBlob((this as IonBlob).bytes, typeAnnotations.toPersistentList())
+        IonType.FLOAT -> ionFloat((this as IonFloat).doubleValue(), annotations)
+        IonType.DECIMAL -> ionDecimal((this as IonDecimal).decimalValue(), annotations)
+        IonType.TIMESTAMP -> ionTimestamp((this as IonTimestamp).timestampValue(), annotations)
+        IonType.STRING -> ionString((this as IonString).stringValue(), annotations)
+        IonType.SYMBOL -> ionSymbol((this as IonSymbol).stringValue(), annotations)
+        IonType.CLOB -> ionClob((this as IonClob).bytes, annotations)
+        IonType.BLOB -> ionBlob((this as IonBlob).bytes, annotations)
         IonType.LIST -> ListValueWrapper(this as IonList)
         IonType.SEXP -> SexpValueWrapper(this as IonSexp)
         IonType.STRUCT -> StructValueWrapper(this as IonStruct)

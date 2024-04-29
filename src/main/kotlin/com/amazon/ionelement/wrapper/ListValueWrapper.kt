@@ -9,17 +9,14 @@ import com.amazon.ionelement.api.ElementType
 import com.amazon.ionelement.api.ListElement
 import com.amazon.ionelement.api.MetaContainer
 import com.amazon.ionelement.api.toIonElement
+import com.amazon.ionelement.impl.*
 import com.amazon.ionelement.impl.ListElementImpl
-import com.amazon.ionelement.impl._withAnnotations
-import com.amazon.ionelement.impl._withMeta
-import com.amazon.ionelement.impl._withMetas
-import com.amazon.ionelement.impl._withoutAnnotations
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.collections.immutable.toPersistentMap
 
-internal class ListValueWrapper(delegate: IonList) : AnyValueWrapper<IonList>(delegate), ListElement {
+internal class ListValueWrapper(delegate: IonList) : AnyValueWrapper<IonList>(delegate), ListElement, UnionOfListAndAnyElement {
     override val type: ElementType get() = ElementType.LIST
 
     override val size: Int get() = delegate.size

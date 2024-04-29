@@ -23,7 +23,7 @@ internal class ListElementImpl(
     values: ImmutableList<AnyElement>,
     override val annotations: ImmutableList<String>,
     override val metas: ImmutableMetaContainer
-) : SeqElementBase(values), ListElement {
+) : SeqElementBase(values), ListElement, UnionOfListAndAnyElement {
     override val type: ElementType get() = ElementType.LIST
 
     override val listValues: List<AnyElement> get() = values

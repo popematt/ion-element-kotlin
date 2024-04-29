@@ -24,7 +24,7 @@ internal class SymbolElementImpl(
     value: String,
     override val annotations: ImmutableList<String>,
     override val metas: ImmutableMetaContainer
-) : TextElementBase(value), SymbolElement {
+) : TextElementBase(value), SymbolElement, UnionOfSymbolAndAnyElement {
     override val type: ElementType get() = ElementType.SYMBOL
 
     override val symbolValue: String get() = textValue

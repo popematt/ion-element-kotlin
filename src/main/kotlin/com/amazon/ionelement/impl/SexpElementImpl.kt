@@ -23,7 +23,7 @@ internal class SexpElementImpl(
     values: ImmutableList<AnyElement>,
     override val annotations: ImmutableList<String>,
     override val metas: ImmutableMetaContainer
-) : SeqElementBase(values), SexpElement {
+) : SeqElementBase(values), SexpElement, UnionOfSexpAndAnyElement {
     override val type: ElementType get() = ElementType.SEXP
 
     override val sexpValues: List<AnyElement> get() = seqValues

@@ -26,7 +26,7 @@ internal class BigIntIntElementImpl(
     override val bigIntegerValue: BigInteger,
     override val annotations: ImmutableList<String>,
     override val metas: ImmutableMetaContainer
-) : AnyElementBase(), IntElement {
+) : AnyElementBase(), IntElement, UnionOfIntAndAnyElement {
 
     override val type: ElementType get() = ElementType.INT
 
