@@ -27,7 +27,7 @@ internal class BigIntIntElementImpl(
     override val bigIntegerValue: BigInteger,
     override val annotations: PersistentList<String>,
     override val metas: PersistentMetaContainer
-) : AnyElementBase(), IntElement {
+) : AnyElementBase(), IntElement, UnionOfIntAndAnyElement {
 
     override val type: ElementType get() = ElementType.INT
 

@@ -25,7 +25,7 @@ internal class BoolElementImpl(
     override val booleanValue: Boolean,
     override val annotations: PersistentList<String>,
     override val metas: PersistentMetaContainer
-) : AnyElementBase(), BoolElement {
+) : AnyElementBase(), BoolElement, UnionOfBoolAndAnyElement {
     override val type: ElementType get() = ElementType.BOOL
 
     override fun copy(annotations: List<String>, metas: MetaContainer): BoolElementImpl =

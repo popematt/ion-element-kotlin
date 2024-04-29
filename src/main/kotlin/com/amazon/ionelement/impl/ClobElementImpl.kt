@@ -25,7 +25,7 @@ internal class ClobElementImpl(
     bytes: ByteArray,
     override val annotations: PersistentList<String>,
     override val metas: PersistentMetaContainer
-) : LobElementBase(bytes), ClobElement {
+) : LobElementBase(bytes), ClobElement, UnionOfClobAndAnyElement {
 
     override val type: ElementType get() = ElementType.CLOB
 

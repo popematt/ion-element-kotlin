@@ -24,7 +24,7 @@ internal class SexpElementImpl(
     values: PersistentList<AnyElement>,
     override val annotations: PersistentList<String>,
     override val metas: PersistentMetaContainer
-) : SeqElementBase(values), SexpElement {
+) : SeqElementBase(values), SexpElement, UnionOfSexpAndAnyElement {
     override val type: ElementType get() = ElementType.SEXP
 
     override val sexpValues: List<AnyElement> get() = seqValues

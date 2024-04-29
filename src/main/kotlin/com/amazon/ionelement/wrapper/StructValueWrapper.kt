@@ -5,6 +5,7 @@ package com.amazon.ionelement.wrapper
 
 import com.amazon.ion.IonStruct
 import com.amazon.ionelement.api.*
+import com.amazon.ionelement.impl.*
 import com.amazon.ionelement.impl.MutableStructFieldsImpl
 import com.amazon.ionelement.impl.StructElementImpl
 import com.amazon.ionelement.impl._withAnnotations
@@ -18,7 +19,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.collections.immutable.toPersistentMap
 
-internal class StructValueWrapper(delegate: IonStruct) : AnyValueWrapper<IonStruct>(delegate), StructElement {
+internal class StructValueWrapper(delegate: IonStruct) : AnyValueWrapper<IonStruct>(delegate), StructElement, UnionOfStructAndAnyElement {
     override val type: ElementType get() = ElementType.STRUCT
 
     override val size: Int get() = delegate.size()
@@ -95,13 +96,6 @@ internal class StructValueWrapper(delegate: IonStruct) : AnyValueWrapper<IonStru
 
     override fun copy(annotations: List<String>, metas: MetaContainer): StructElementImpl =
         StructElementImpl(fields as PersistentList<StructField>, annotations.toPersistentList(), metas.toPersistentMap())
-
-    override fun withAnnotations(vararg additionalAnnotations: String): StructElementImpl = _withAnnotations(*additionalAnnotations)
-    override fun withAnnotations(additionalAnnotations: Iterable<String>): StructElementImpl = _withAnnotations(additionalAnnotations)
-    override fun withoutAnnotations(): StructElementImpl = _withoutAnnotations()
-    override fun withMetas(additionalMetas: MetaContainer): StructElementImpl = _withMetas(additionalMetas)
-    override fun withMeta(key: String, value: Any): StructElementImpl = _withMeta(key, value)
-    override fun withoutMetas(): StructValueWrapper = this
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

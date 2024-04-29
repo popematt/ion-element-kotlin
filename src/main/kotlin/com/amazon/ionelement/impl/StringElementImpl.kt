@@ -25,7 +25,7 @@ internal class StringElementImpl(
     value: String,
     override val annotations: PersistentList<String>,
     override val metas: PersistentMetaContainer
-) : TextElementBase(value), StringElement {
+) : TextElementBase(value), StringElement, UnionOfStringAndAnyElement {
     override val type: ElementType get() = ElementType.STRING
 
     override val stringValue: String get() = textValue

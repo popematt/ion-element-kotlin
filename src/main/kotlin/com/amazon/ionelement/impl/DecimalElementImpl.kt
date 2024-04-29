@@ -26,7 +26,7 @@ internal class DecimalElementImpl(
     override val decimalValue: Decimal,
     override val annotations: PersistentList<String>,
     override val metas: PersistentMetaContainer
-) : AnyElementBase(), DecimalElement {
+) : AnyElementBase(), DecimalElement, UnionOfDecimalAndAnyElement {
     override val type get() = ElementType.DECIMAL
 
     override fun copy(annotations: List<String>, metas: MetaContainer): DecimalElementImpl =

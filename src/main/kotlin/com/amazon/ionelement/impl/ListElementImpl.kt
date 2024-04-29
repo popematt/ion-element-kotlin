@@ -24,7 +24,7 @@ internal class ListElementImpl(
     values: PersistentList<AnyElement>,
     override val annotations: PersistentList<String>,
     override val metas: PersistentMetaContainer
-) : SeqElementBase(values), ListElement {
+) : SeqElementBase(values), ListElement, UnionOfListAndAnyElement {
     override val type: ElementType get() = ElementType.LIST
 
     override val listValues: List<AnyElement> get() = values

@@ -26,7 +26,7 @@ internal class LongIntElementImpl(
     override val longValue: Long,
     override val annotations: PersistentList<String>,
     override val metas: PersistentMetaContainer
-) : AnyElementBase(), IntElement {
+) : AnyElementBase(), IntElement, UnionOfIntAndAnyElement {
     override val integerSize: IntElementSize get() = IntElementSize.LONG
     override val type: ElementType get() = ElementType.INT
 

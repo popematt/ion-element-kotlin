@@ -31,7 +31,7 @@ internal class StructElementImpl(
     private val allFields: PersistentList<StructField>,
     override val annotations: PersistentList<String>,
     override val metas: PersistentMetaContainer
-) : AnyElementBase(), StructElement {
+) : AnyElementBase(), StructElement, UnionOfStructAndAnyElement {
 
     override val type: ElementType get() = ElementType.STRUCT
     override val size = allFields.size
