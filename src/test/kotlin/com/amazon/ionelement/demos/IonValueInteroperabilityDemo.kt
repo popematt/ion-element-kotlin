@@ -15,9 +15,9 @@ import org.junit.jupiter.api.Test
  * Demonstrates how [IonElement] can be used in an application that has dependencies
  * that use [IonValue], and vice versa.
  */
-class IonValueInteroperability {
+class IonValueInteroperabilityDemo {
     @Test
-    fun foo() {
+    fun `add a wrapped IonList to a StructElement`() {
 
         val evenList: IonElement = loadSingleElement("[2, 4, 6]")
         val oddList: IonElement = loadSingleElement("[1, 3, 5]")
@@ -44,13 +44,13 @@ class IonValueInteroperability {
         assertEquals(evensAndOdds.hashCode(), evensAndOddsB.hashCode())
         assertEquals(evensAndOdds.toString(), evensAndOddsB.toString())
 
-        // This is not public functionality (yet), but it demonstrates that we're still using
+        // This is not public functionality, but it demonstrates that we're still using
         // the wrapped IonValue rather than eagerly converting it.
         assertSame(ionValueOddList, (evensAndOddsB["odds"] as IonValueWrapper).unwrap())
     }
 
     @Test
-    fun bar() {
+    fun `add a ListElement to a wrapped IonStruct`() {
 
         val ionValueEvens: IonStruct = ION.singleValue("{ evens: [2, 4, 6] }").apply { makeReadOnly() } as IonStruct
         val oddList: IonElement = loadSingleElement("[1, 3, 5]")
@@ -60,10 +60,8 @@ class IonValueInteroperability {
         }
 
         // These verifications rely on non-public functionality
-
         // The outer struct has been seamlessly converted to `StructElement`
         assertTrue(evensAndOdds is StructElementImpl)
-
         // ... but we're still using the wrapped IonValue for the evens list.
         assertSame(ionValueEvens.get("evens"), (evensAndOdds["evens"] as IonValueWrapper).unwrap())
     }
