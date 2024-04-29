@@ -182,7 +182,24 @@ class EquivalenceTests {
                 "1",
                 "2",
                 isEquiv = false
-            )
+            ),
+            // Integers that are larger than Long.MAX_VALUE
+            EquivTestCase(
+                "12345678901234567890",
+                "12345678901234567890",
+                isEquiv = true
+            ),
+            EquivTestCase(
+                "12345678901234567890",
+                "12345678901234567891",
+                isEquiv = false
+            ),
+            // Big and small integers
+            EquivTestCase(
+                "12345678901234567890",
+                "1",
+                isEquiv = false
+            ),
         ).includeAnnotations()
     }
 

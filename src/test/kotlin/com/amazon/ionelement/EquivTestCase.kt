@@ -19,6 +19,7 @@ import com.amazon.ionelement.api.*
 import com.amazon.ionelement.impl.*
 import com.amazon.ionelement.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import org.junit.jupiter.api.Assertions
 
 data class EquivTestCase(val left: String, val right: String, val isEquiv: Boolean) {
@@ -37,11 +38,14 @@ data class EquivTestCase(val left: String, val right: String, val isEquiv: Boole
         assertEquals(leftElement, leftProxy)
         val leftWrapped = leftElement.toIonValue(ION).wrapUncheckedIntoIonElement()
         assertEquals(leftElement, leftWrapped)
+        assertTrue(leftElement.isEquivalentTo(leftElement.toIonValue(ION)))
 
         val rightElement = loader.loadSingleElement(right)
         val rightElementWithMetas = rightElement.withMeta("rightMeta", 2)
 
         val rightWrapped = rightElement.toIonValue(ION).wrapUncheckedIntoIonElement()
+        assertTrue(rightElement.isEquivalentTo(rightElement.toIonValue(ION)))
+        assertEquals(rightElement.hashCode(), hashIonValue(rightElement.toIonValue(ION)))
 
         // Try using a proxy to make sure that equivalence is not tied to a particular implementation.
         val rightProxy = rightElement.createProxy()
@@ -75,8 +79,8 @@ data class EquivTestCase(val left: String, val right: String, val isEquiv: Boole
         Assertions.assertNotEquals(0, rightElement.hashCode())
 
         // Check hashCode against normative implementation
-        Assertions.assertEquals(hashElement(leftElement), leftElement.hashCode(), "hashCode() does not match normative implementation")
-        Assertions.assertEquals(hashElement(rightElement), rightElement.hashCode(), "hashCode() does not match normative implementation")
+        Assertions.assertEquals(hashElement(leftElement), leftElement.hashCode(), "hashCode() does not match normative implementation: ${leftElement::class.simpleName} $leftElement")
+        Assertions.assertEquals(hashElement(rightElement), rightElement.hashCode(), "hashCode() does not match normative implementation: ${rightElement::class.simpleName} $rightElement")
 
         // Equivalence should be reflexive
         checkEquivalence(true, leftElement, leftElement)

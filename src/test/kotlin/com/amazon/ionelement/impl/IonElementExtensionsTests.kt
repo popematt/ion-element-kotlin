@@ -2,7 +2,7 @@ package com.amazon.ionelement.impl
 
 import com.amazon.ion.Decimal
 import com.amazon.ionelement.api.*
-import com.amazon.ionelement.util.ArgumentsProviderBase
+import com.amazon.ionelement.util.*
 import java.math.BigInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -26,7 +26,10 @@ class IonElementExtensionsTests : ArgumentsProviderBase() {
         emptyIonSexp(),
         emptyIonStruct(),
         emptyClob(),
-        emptyBlob()
+        emptyBlob(),
+        ION.singleValue("[]").wrapUncheckedIntoIonElement(),
+        ION.singleValue("()").wrapUncheckedIntoIonElement(),
+        ION.singleValue("{}").wrapUncheckedIntoIonElement(),
     )
 
     @ParameterizedTest
@@ -72,14 +75,16 @@ class IonElementExtensionsTests : ArgumentsProviderBase() {
     @ParameterizedTest
     @ArgumentsSource(IonElementExtensionsTests::class)
     fun withoutAnnotations(element: IonElement) {
+        val noAnnos1 = element.withoutAnnotations()
         val hasAnnos = element.withAnnotations("foo", "bar").withMeta("foo", 42)
         assertEquals(2, hasAnnos.annotations.size)
 
-        val noAnnos = hasAnnos.withoutAnnotations()
-        assertEquals(0, noAnnos.annotations.size)
-        assertSame(noAnnos, noAnnos.withAnnotations())
+        val noAnnos2 = hasAnnos.withoutAnnotations()
+        assertEquals(noAnnos1, noAnnos2)
+        assertEquals(0, noAnnos2.annotations.size)
+        assertSame(noAnnos1, noAnnos1.withAnnotations())
         // also check that metas haven't been lost.
-        assertEquals(42, noAnnos.metas["foo"])
+        assertEquals(42, noAnnos2.metas["foo"])
     }
 
     @ParameterizedTest
@@ -114,6 +119,8 @@ class IonElementExtensionsTests : ArgumentsProviderBase() {
     @ParameterizedTest
     @ArgumentsSource(IonElementExtensionsTests::class)
     fun withoutMetas(element: IonElement) {
+        assertSame(element, element.withoutMetas())
+
         val hasMetas = element.withAnnotations("foo").withMeta("foo", 42)
         assertEquals(1, hasMetas.annotations.size)
         assertTrue(hasMetas.annotations.contains("foo"))

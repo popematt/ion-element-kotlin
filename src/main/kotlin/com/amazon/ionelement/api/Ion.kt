@@ -337,6 +337,25 @@ public fun ionClob(
 /** Returns the empty [ClobElement] singleton. */
 public fun emptyClob(): ClobElement = EMPTY_CLOB
 
+/**
+ * Creates a `ByteArrayView` for the given `ByteArray`.
+ *
+ * Note that the [ByteArray] is cloned so immutability can be enforced.
+ */
+public fun byteArrayViewOf(bytes: ByteArray): ByteArrayView {
+    // Safe because we're making a defensive copy
+    return bytes.clone().toByteArrayViewUnsafe()
+}
+
+/**
+ * Creates a `ByteArrayView` for the given `ByteArray`.
+ *
+ * Does _not_ clone the given [ByteArray], hence the "unsafe" in its name.
+ */
+internal fun ByteArray.toByteArrayViewUnsafe(): ByteArrayView {
+    return ByteArrayViewImpl(this)
+}
+
 /** Creates a [ListElement] that represents an Ion `list`. */
 @JvmOverloads
 public fun ionListOf(
@@ -502,6 +521,16 @@ internal fun <E> Iterable<E>.toEmptyOrPersistentList(): PersistentList<E> {
     }
     return if (isEmpty) EMPTY_PERSISTENT_LIST else toPersistentList()
 }
+
+/**
+ * Converts an [Array] to a [PersistentList]. For some unknown reason, the `kotlinx.collections.immutable`
+ * library does not provide a function like this.
+ */
+internal fun <T> Array<T>.toPersistentList(): PersistentList<T> =
+    persistentListOf<T>().builder().let {
+        it.addAll(this)
+        it.build()
+    }
 
 /**
  * Converts an `Iterable` to a `PersistentList`, transforming each element using [block].

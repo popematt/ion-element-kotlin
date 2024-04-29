@@ -3,6 +3,9 @@
 
 package com.amazon.ionelement.wrapper
 
+import com.amazon.ion.IonList
+import com.amazon.ion.IonSexp
+import com.amazon.ion.IonStruct
 import com.amazon.ion.IonValue
 import com.amazon.ionelement.api.*
 import com.amazon.ionelement.util.*
@@ -33,7 +36,7 @@ class IonValueWrapperTests {
         `clob value`("{{ \"abc\" }}"),
         `list value`("[a,b,c]"),
         `sexp value`("(1 2 3)"),
-        `struct value`("{a:1,b:2}"),
+        `struct value`("{a:1,b:2,b:3}"),
         `annotated value`("foo::bar::[]");
 
         fun testIt(block: (IonValue) -> Unit) = block(ION.singleValue(ionText))
@@ -81,6 +84,32 @@ class IonValueWrapperTests {
 
     @ParameterizedTest
     @EnumSource
+    fun GoodTestCase.`a wrapped IonValue have the same properties as the original IonValue`() = testIt {
+        val wrapped = it.wrapUncheckedIntoIonElement()
+
+        assertEquals(it.typeAnnotations.toList(), wrapped.annotations)
+
+        when (wrapped) {
+            is ListElement -> {
+                it as IonList
+                assertEquals(it.size, wrapped.size)
+            }
+            is SexpElement -> {
+                it as IonSexp
+                assertEquals(it.size, wrapped.size)
+            }
+            is StructElement -> {
+                it as IonStruct
+                assertEquals(it.toList().size, wrapped.size)
+                assertEquals(it.toList().size, wrapped.size)
+            }
+            // TODO: Add more cases if more wrappers are added.
+        }
+    }
+
+
+    @ParameterizedTest
+    @EnumSource
     fun GoodTestCase.`wrapUncheckedIntoIonElement should wrap the same instance, not a copy`() = testIt {
         val wrapped = it.wrapUncheckedIntoIonElement()
         if (wrapped is AnyValueWrapper<*>) {
@@ -121,7 +150,6 @@ class IonValueWrapperTests {
     )
     fun `when wrapping an unknown symbol, should throw exception`(ionText: String) {
         val ionValue = ION.singleValue(ionText)
-
         assertThrows<IonElementException> {
             val wrapped = ionValue.wrapUncheckedIntoIonElement()
             // When the unknown symbol is an annotation, it might not throw until the annotations are accessed.
@@ -132,11 +160,36 @@ class IonValueWrapperTests {
         }
     }
 
+    // TODO: Should we have wrappers for all types so that this can pass for e.g. $0::true and $0 ?
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "[$0]",
+            "{$0:1}",
+            "[$0::[]]",
+        ]
+    )
+    fun `when hashing an unknown symbol, should throw exception`(ionText: String) {
+        val ionValue = ION.singleValue(ionText)
+        val wrapped = ionValue.wrapUncheckedIntoIonElement()
+
+        println(wrapped.hashCode())
+        println(wrapped.toString())
+        println(wrapped == emptyIonList())
+    }
+
     @Test
     fun `attempting to wrap a datagram should throw an exception`() {
         val datagram = ION.loader.load("foo bar")
         assertThrows<IonElementWrapperException> {
             datagram.wrapUncheckedIntoIonElement()
         }
+    }
+
+    @Test
+    fun `attempting to hash a datagram should throw an exception`() {
+        // This test isn't really for an IonValueWrapper, but it seems to fit here.
+        val datagram = ION.loader.load("foo bar")
+        assertThrows<IllegalArgumentException> { hashIonValue(datagram) }
     }
 }

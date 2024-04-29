@@ -34,30 +34,30 @@ class StructValueWrapperTests : StructIonElementTests() {
 }
 
 abstract class StructIonElementTests {
-    protected val structText = "{ a: 1, b: 2, b: 3 }"
+    protected val structText = "{ a: 1, b: 2, b: 3, b: 3 }"
     abstract val struct: StructElement
 
     @Test
     fun size() {
-        assertEquals(3, struct.size, "struct size should be 3")
+        assertEquals(4, struct.size, "struct size should be 4")
     }
 
     @Test
     fun fields() {
         val structFields = struct.fields.toList()
-        assertEquals(3, structFields.size)
+        assertEquals(4, structFields.size)
         structFields.assertHasField("a", ionInt(1))
         structFields.assertHasField("b", ionInt(2))
-        structFields.assertHasField("b", ionInt(3))
+        structFields.assertHasField("b", ionInt(3), expectedCount = 2)
     }
 
     @Test
     fun values() {
         val values = struct.values.toList()
-        assertEquals(3, values.size, "3 values should be present")
+        assertEquals(4, values.size, "4 values should be present")
         assertDoesNotThrow("value 1 should be present") { values.single { it.longValue == 1L } }
         assertDoesNotThrow("value 2 should be present") { values.single { it.longValue == 2L } }
-        assertDoesNotThrow("value 3 should be present") { values.single { it.longValue == 3L } }
+        assertTrue(values.count { it.longValue == 3L } == 2, "value 3 should be present")
     }
 
     @Test
@@ -91,7 +91,7 @@ abstract class StructIonElementTests {
 
         val b2 = struct.getOptional("b")
         assertTrue(
-            listOf(ionInt(1), ionInt(2)).any { it == b2 },
+            listOf(ionInt(2), ionInt(3)).any { it == b2 },
             "any value of the b field is returned (duplicate field name)"
         )
 
@@ -102,13 +102,29 @@ abstract class StructIonElementTests {
     }
 
     @Test
+    fun getAll() {
+        val expectedValueCounts = mapOf(
+            // The value 2 should occur once in the list
+            ionInt(2) to 1,
+            // The value 3 should occur twice in the list
+            ionInt(3) to 2,
+        )
+        assertEquals(expectedValueCounts, struct.getAll("b").groupingBy { it }.eachCount())
+
+        assertEquals(emptyList<AnyElement>(), struct.getAll("z"))
+    }
+
+    @Test
     fun containsField() {
         assertTrue(struct.containsField("a"))
         assertTrue(struct.containsField("b"))
         assertFalse(struct.containsField("z"))
     }
 
-    private fun Iterable<StructField>.assertHasField(expectedName: String, expectedValue: IonElement) {
-        assertTrue(this.any { (name, value) -> name == expectedName && value == expectedValue }, "Must have field '$expectedName'")
+    private fun Iterable<StructField>.assertHasField(expectedName: String, expectedValue: IonElement, expectedCount: Int = 1) {
+        val expectedField = field(expectedName, expectedValue)
+        val actualCount = this.count { it == expectedField }
+        assertTrue(actualCount > 0, "Must have field $expectedField")
+        assertTrue(actualCount == expectedCount, "Expected $expectedField $expectedCount times; found $actualCount")
     }
 }
