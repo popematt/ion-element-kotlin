@@ -31,6 +31,8 @@ public fun areElementsEqual(left: IonElement, right: IonElement): Boolean {
 
 /**
  * Checks if an [IonElement] and an [IonValue] are equivalent.
+ *
+ * TODO: Should/can we expose this publicly?
  */
 internal fun AnyElement.isEquivalentTo(other: IonValue): Boolean {
     val thisType = this.type.toIonType()
@@ -205,7 +207,11 @@ public fun hashElement(ionElement: IonElement): Int {
  * which is the same as an empty string. This is still consistent with [AnyElement.isEquivalentTo] because
  * SymbolTokens with unknown text are generally unrepresentable in [IonElement].
  *
- * DO NOT MAKE THIS PUBLIC. Why???
+ * **WARNING: DO NOT MAKE THIS PUBLIC.**
+ * The `ion-element-kotlin` library is not in the business of defining hashing algorithms for [IonValue].
+ * This function exists only to facilitate the [IonValueWrapper][com.amazon.ionelement.wrapper.IonValueWrapper]
+ * implementations.
+ *
  */
 internal fun hashIonValue(ionValue: IonValue): Int {
     val typeAndValueHashCode = if (ionValue.isNullValue) {
@@ -256,6 +262,9 @@ public fun hashField(structField: StructField): Int {
     return structField.name.hashCode() * 31 + structField.value.hashCode()
 }
 
+/**
+ * Hashes an [IonValue] as if it were a [StructField].
+ */
 private fun hashIonValueField(ionValue: IonValue): Int {
     return ionValue.fieldNameSymbol.hashCode() * 31 + hashIonValue(ionValue)
 }
