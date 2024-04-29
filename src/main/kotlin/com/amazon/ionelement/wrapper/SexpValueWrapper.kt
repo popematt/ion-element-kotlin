@@ -7,10 +7,6 @@ import com.amazon.ion.IonSexp
 import com.amazon.ionelement.api.*
 import com.amazon.ionelement.impl.*
 import com.amazon.ionelement.impl.SexpElementImpl
-import com.amazon.ionelement.impl._withAnnotations
-import com.amazon.ionelement.impl._withMeta
-import com.amazon.ionelement.impl._withMetas
-import com.amazon.ionelement.impl._withoutAnnotations
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList

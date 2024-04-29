@@ -53,7 +53,7 @@ public class IonElementConstraintException internal constructor(
  * [blame] is the [IonValue] instance that violates the constraint.
  */
 public class IonElementWrapperException internal constructor(
-    public val blame: IonValue,  // TODO: Is this a good idea?
+    public val blame: IonValue, // TODO: Is this a good idea?
     description: String,
     cause: Throwable? = null
 ) : IonElementException(null, description, cause)

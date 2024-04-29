@@ -225,7 +225,7 @@ internal fun hashIonValue(ionValue: IonValue): Int {
             }
             // Adding compareTo(0.0) causes 0e0 to have a different hash code than -0e0
             IonType.FLOAT -> (ionValue as IonFloat).doubleValue().let { it.compareTo(0.0).hashCode() * 31 + it.hashCode() }
-            IonType.DECIMAL -> (ionValue as IonDecimal).decimalValue().let {  it.isNegativeZero.hashCode() * 31 + it.hashCode() }
+            IonType.DECIMAL -> (ionValue as IonDecimal).decimalValue().let { it.isNegativeZero.hashCode() * 31 + it.hashCode() }
             IonType.TIMESTAMP -> (ionValue as IonTimestamp).timestampValue().hashCode()
             IonType.STRING -> (ionValue as IonString).stringValue().hashCode()
             IonType.SYMBOL -> (ionValue as IonSymbol).symbolValue().hashCode()
@@ -244,7 +244,6 @@ internal fun hashIonValue(ionValue: IonValue): Int {
     }
     return typeAndValueHashCode * 31 + ionValue.typeAnnotationSymbols.toList().hashCode()
 }
-
 
 /**
  * Calculates the hash code of a [StructField].

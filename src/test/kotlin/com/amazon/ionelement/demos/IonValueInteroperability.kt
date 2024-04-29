@@ -59,7 +59,6 @@ class IonValueInteroperability {
             set("odds", oddList)
         }
 
-
         // These verifications rely on non-public functionality
 
         // The outer struct has been seamlessly converted to `StructElement`
@@ -68,5 +67,4 @@ class IonValueInteroperability {
         // ... but we're still using the wrapped IonValue for the evens list.
         assertSame(ionValueEvens.get("evens"), (evensAndOdds["evens"] as IonValueWrapper).unwrap())
     }
-
 }
