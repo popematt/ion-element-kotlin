@@ -20,9 +20,18 @@ internal abstract class AnyValueWrapper<T : IonValue>(internal val delegate: T) 
         get() = emptyMetaContainer()
 
     final override val annotations: List<String>
-        get() = handleIonValueException { delegate.typeAnnotations.toList() }
+        get() = handleIonException { delegate.typeAnnotations.toList() }
 
     final override fun writeTo(writer: IonWriter) { delegate.writeTo(writer) }
 
     final override fun writeContentTo(writer: IonWriter) = TODO("Not implemented because AnyValueWrapper has a custom writeTo implementation.")
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other is IonValueWrapper) return this.unwrap() == other.unwrap()
+        if (other !is IonElement) return false
+        return other.asAnyElement().isEquivalentTo(delegate)
+    }
+
+    override fun hashCode(): Int = hashIonValue(delegate)
 }

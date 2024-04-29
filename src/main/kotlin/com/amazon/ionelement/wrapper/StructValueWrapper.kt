@@ -42,7 +42,7 @@ internal class StructValueWrapper(delegate: IonStruct) : AnyValueWrapper<IonStru
         get() {
             if (!this::fieldsBackingField.isInitialized) {
                 val listBuilder = persistentListOf<StructField>().builder()
-                delegate.mapTo(listBuilder) { handleIonValueException { field(it.fieldNameSymbol.assumeText(), it.toWrapper()) } }
+                delegate.mapTo(listBuilder) { handleIonException { field(it.fieldNameSymbol.assumeText(), it.toWrapper()) } }
                 fieldsBackingField = listBuilder.build()
             }
             return fieldsBackingField
@@ -133,7 +133,7 @@ internal class StructValueWrapper(delegate: IonStruct) : AnyValueWrapper<IonStru
     private var cachedHashCode: Int? = null
     override fun hashCode(): Int {
         if (this.cachedHashCode == null) {
-            cachedHashCode = hashElement(this)
+            cachedHashCode = super.hashCode()
         }
         return this.cachedHashCode!!
     }

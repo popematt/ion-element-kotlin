@@ -30,8 +30,8 @@ import com.amazon.ionelement.impl.*
  * However, the `IonValueWrapper` is not exposed directly to users, so it would be possible to add
  * scalar wrappers if they are deemed worthwhile.
  */
-internal fun IonValue.toWrapper(): AnyElement = handleIonValueException {
-    return if (isNullValue) {
+internal fun IonValue.toWrapper(): AnyElement = handleIonException {
+    if (isNullValue) {
         NullElementImpl(type.toElementType(), typeAnnotations.toPersistentList(), EMPTY_METAS)
     } else when (type) {
         IonType.BOOL -> ionBool((this as IonBool).booleanValue(), typeAnnotations.toPersistentList())
@@ -71,9 +71,9 @@ internal fun IonValue.toWrapper(): AnyElement = handleIonValueException {
     }.asAnyElement()
 }
 
-internal inline fun <T> IonValueWrapper.handleIonValueException(block: () -> T): T = unwrap().handleIonValueException { block() }
+internal fun <T> IonValueWrapper.handleIonException(block: () -> T): T = unwrap().handleIonException { block() }
 
-internal inline fun <T> IonValue.handleIonValueException(block: IonValue.() -> T): T {
+internal fun <T> IonValue.handleIonException(block: IonValue.() -> T): T {
     try {
         return block()
     } catch (e: IonException) {

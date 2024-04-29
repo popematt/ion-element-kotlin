@@ -7,6 +7,6 @@ import com.amazon.ion.IonValue
 import com.amazon.ionelement.api.*
 import com.amazon.ionelement.impl.*
 
-internal interface IonValueWrapper : AnyElement {
+internal interface IonValueWrapper : IonElement {
     fun unwrap(): IonValue
 }

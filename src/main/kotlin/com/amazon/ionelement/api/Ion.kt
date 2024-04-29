@@ -335,6 +335,25 @@ public fun ionClob(
 /** Returns the empty [ClobElement] singleton. */
 public fun emptyClob(): ClobElement = EMPTY_CLOB
 
+/**
+ * Creates a `ByteArrayView` for the given `ByteArray`.
+ *
+ * Note that the [ByteArray] is cloned so immutability can be enforced.
+ */
+public fun byteArrayViewOf(bytes: ByteArray): ByteArrayView {
+    // Safe because we're making a defensive copy
+    return bytes.clone().toByteArrayViewUnsafe()
+}
+
+/**
+ * Creates a `ByteArrayView` for the given `ByteArray`.
+ *
+ * Does _not_ clone the given [ByteArray], hence the "unsafe" in its name.
+ */
+internal fun ByteArray.toByteArrayViewUnsafe(): ByteArrayView {
+    return ByteArrayViewImpl(this)
+}
+
 /** Creates a [ListElement] that represents an Ion `list`. */
 @JvmOverloads
 public fun ionListOf(

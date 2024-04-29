@@ -27,4 +27,6 @@ public interface ByteArrayView : Iterable<Byte> {
     public operator fun get(index: Int): Byte
 
     public fun copyOfBytes(): ByteArray
+
+    public fun contentEquals(otherBytes: ByteArray): Boolean = this == byteArrayViewOf(otherBytes)
 }
