@@ -5,8 +5,13 @@ package com.amazon.ionelement.wrapper
 
 import com.amazon.ion.IonValue
 import com.amazon.ionelement.api.*
-import com.amazon.ionelement.impl.*
 
+/**
+ * Implications:
+ *   - IonElement now supports symbols with unknown text
+ *   - ?
+ *
+ */
 internal interface IonValueWrapper : IonElement {
     fun unwrap(): IonValue
 }

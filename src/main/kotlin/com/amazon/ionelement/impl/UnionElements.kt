@@ -2,7 +2,7 @@ package com.amazon.ionelement.impl
 
 import com.amazon.ionelement.api.*
 
-// Macros or smarter type bounds would be nice here.
+// Macros would be nice here.
 
 internal interface UnionOfBoolAndAnyElement : BoolElement, AnyElement {
     override fun copy(annotations: List<String>, metas: MetaContainer): UnionOfBoolAndAnyElement
