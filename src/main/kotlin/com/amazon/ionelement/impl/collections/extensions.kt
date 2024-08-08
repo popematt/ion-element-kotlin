@@ -79,9 +79,46 @@ internal fun <E> List<E>.toImmutableListUnsafe(): ImmutableList<E> {
  * Creates a [ImmutableList] for [this] without making a defensive copy.
  * Only call this method if you are sure that [this] cannot leak anywhere it could be mutated.
  */
+internal fun <E> List<E>.toImmutableListUnsafeAllowModification(): ImmutableList<E> {
+    if (this is ImmutableList<E>) return this
+    return ImmutableListAdapter(this)
+}
+
+/**
+ * Creates a [ImmutableList] for [this] without making a defensive copy.
+ * Only call this method if you are sure that [this] cannot leak anywhere it could be mutated.
+ */
 internal fun <E> Array<E>.toImmutableListUnsafe(): ImmutableList<E> {
     if (isEmpty()) return EMPTY_IMMUTABLE_LIST
     // This wraps the array in an ArrayList and then in an ImmutableListAdapter. In theory, we could reduce the overhead
     // even further but using only a single wrapper layer, if we created such a thing.
     return ImmutableListAdapter(asList())
+}
+
+
+internal interface SometimesMutableList<E> {
+    fun add(element: E)
+    fun seal(): ImmutableList<E>
+}
+
+private class SometimesMutableListImpl<E> private constructor(private val impl: MutableList<E>) : SometimesMutableList<E>, ImmutableList<E>, List<E> by impl {
+    constructor(): this(mutableListOf())
+
+    private var isClosed = false
+
+    override fun add(element: E) {
+        if (isClosed) throw UnsupportedOperationException()
+        impl.add(element)
+    }
+
+    override fun seal(): ImmutableList<E> {
+        isClosed = true
+        return this
+    }
+
+    override fun subList(fromIndex: Int, toIndex: Int): ImmutableList<E> = ImmutableListAdapter(impl.subList(fromIndex, toIndex))
+
+    override fun equals(other: Any?): Boolean = impl.equals(other)
+    override fun hashCode(): Int = impl.hashCode()
+    override fun toString(): String = impl.toString()
 }

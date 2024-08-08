@@ -15,12 +15,18 @@
 
 package com.amazon.ionelement
 
+import com.amazon.ion.util.Equivalence
 import com.amazon.ionelement.api.*
+import com.amazon.ionelement.impl.collections.*
 import com.amazon.ionelement.util.INCLUDE_LOCATION_META
 import com.amazon.ionelement.util.ION
 import com.amazon.ionelement.util.IonElementLoaderTestCase
 import com.amazon.ionelement.util.convertToString
+import kotlinx.collections.immutable.adapters.ImmutableListAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
@@ -45,6 +51,8 @@ class IonElementLoaderTests {
         // Converting from IonValue to IonElement should result in an IonElement that is equivalent to the
         // parsed IonElement
         assertEquals(parsedIonValue.toIonElement(), parsedIonElement)
+
+        assertEquals(tc.expectedElement, parsedIonElement)
     }
 
     companion object {
@@ -57,7 +65,7 @@ class IonElementLoaderTests {
 
             IonElementLoaderTestCase("1", ionInt(1)),
 
-            IonElementLoaderTestCase("existence::42", ionInt(1).withAnnotations("existence")),
+            IonElementLoaderTestCase("existence::42", ionInt(42).withAnnotations("existence")),
 
             IonElementLoaderTestCase("\"some string\"", ionString("some string")),
 
@@ -65,7 +73,7 @@ class IonElementLoaderTests {
 
             IonElementLoaderTestCase("[1, 2, 3]", ionListOf(ionInt(1), ionInt(2), ionInt(3))),
 
-            IonElementLoaderTestCase("(1 2 3)", ionListOf(ionInt(1), ionInt(2), ionInt(3))),
+            IonElementLoaderTestCase("(1 2 3)", ionSexpOf(ionInt(1), ionInt(2), ionInt(3))),
 
             IonElementLoaderTestCase(
                 "{ foo: 1, bar: 2, bat: 3 }",
@@ -74,7 +82,19 @@ class IonElementLoaderTests {
                     "bar" to ionInt(2),
                     "bat" to ionInt(3)
                 )
-            )
+            ),
+
+            // Nested container cases
+            IonElementLoaderTestCase("(1 (2 3))", ionSexpOf(ionInt(1), ionSexpOf(ionInt(2), ionInt(3)))),
+            IonElementLoaderTestCase("{foo:[1]}", ionStructOf("foo" to ionListOf(ionInt(1)))),
+            IonElementLoaderTestCase("[{foo:1}]", ionListOf(ionStructOf("foo" to ionInt(1)))),
+            IonElementLoaderTestCase("{foo:{bar:1}}", ionStructOf("foo" to ionStructOf("bar" to ionInt(1)))),
+            IonElementLoaderTestCase("{foo:[{}]}", ionStructOf("foo" to ionListOf(ionStructOf(emptyList())))),
+            IonElementLoaderTestCase("[{}]", ionListOf(ionStructOf(emptyList()))),
+            IonElementLoaderTestCase("[{}, {}]", ionListOf(ionStructOf(emptyList()), ionStructOf(emptyList()))),
+            IonElementLoaderTestCase("[{foo:1, bar: 2}]", ionListOf(ionStructOf("foo" to ionInt(1), "bar" to ionInt(2)))),
+            IonElementLoaderTestCase("{foo:[{bar:({})}]}",
+                ionStructOf("foo" to ionListOf(ionStructOf("bar" to ionSexpOf(ionStructOf(emptyList())))))),
         )
     }
 }
